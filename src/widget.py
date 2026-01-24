@@ -9,7 +9,6 @@ def mask_account_card(account_or_card: str) -> str:
     :return masked string: Visa Platinum 7000 79** **** 6361
     """
     try:
-
         result = ""
         size_str = len(account_or_card)
         # Проверяем длину строки
