@@ -1,4 +1,7 @@
-def filter_by_state(list_dicts: list[dict], state: str = "EXECUTED") -> list[dict]:
+from typing import Any, Dict, List
+
+
+def filter_by_state(list_dicts: List[Dict[str, Any]], state: str = "EXECUTED") -> List[Dict[str, Any]]:
     """
     Функция принимает на вход список словарей с данными о банковских операциях и параметр
     state, возвращает новый список, содержащий только те словари, у которых ключ state
@@ -12,7 +15,7 @@ def filter_by_state(list_dicts: list[dict], state: str = "EXECUTED") -> list[dic
     return [d for d in list_dicts if isinstance(d, dict) and d.get("state") == state]
 
 
-def sort_by_date(list_dicts: list[dict], is_reverse: bool = True) -> list:
+def sort_by_date(list_dicts: List[Dict[str, Any]], is_reverse: bool = True) -> List[Dict[str, Any]]:
     """
     Функция принимает на вход список словарей и параметр порядка сортировки,
     возвращает новый список, в котором исходные словари отсортированы по дате.
@@ -21,7 +24,7 @@ def sort_by_date(list_dicts: list[dict], is_reverse: bool = True) -> list:
     :return:
     """
     # Создаем переменную где будем хранить результат или пустой список
-    result = []
+    result = list(dict())
 
     # Внутрення key функция с проверками для lamda функции, необходима для sorted()
     def get_date_by_ggggmmdd(str_date: str) -> str:
