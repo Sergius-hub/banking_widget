@@ -6,6 +6,8 @@ SUCCESS_CASES = [
     ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
     ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
     ("Счет 73654108430135874305", "Счет **4305"),
+    ("7000792289606361", "7000 79** **** 6361"),
+    ("8888888888888888", "8888 88** **** 8888")
 ]
 
 ERROR_CASES_INVALID_TYPE = [
@@ -16,13 +18,29 @@ ERROR_CASES_INVALID_TYPE = [
 
 ERROR_CASES_INVALID_VALUE = [
     "",                  # пустая строка
+    "123456789012345",   # короткая строка
+    "123456789012345D",  # неправильный номер
+    "Visa Platinum7000792289606361",    # слитный номер
+    "Счет73654108430135874305",         # слитный счет
+    "Счет8430135874305",                # слитный номер
 ]
+# УСПЕШНЫЕ ИСХОДЫ
+@pytest.mark.parametrize("valid_value, expected_result", SUCCESS_CASES)
+def test_mask_account_card(valid_value, expected_result):
+    assert mask_account_card(valid_value) == expected_result
 
-# @pytest.mark.parametrize("valid_value, expected_result", SUCCESS_CASES)
-# def test_mask_account_card(valid_value, expected_result):
-#     assert mask_account_card(valid_value) == expected_result
-
+# ОШИБКИ ТИПА АРГУМЕНТА
 @pytest.mark.parametrize("invalid_type", ERROR_CASES_INVALID_TYPE)
 def test_mask_account_card_type_errors(invalid_type):
     with pytest.raises(TypeError):
         mask_account_card(invalid_type)
+
+# ОШИБКИ ЗНАЧЕНИЯ АРГУМЕНТА
+@pytest.mark.parametrize("invalid_value", ERROR_CASES_INVALID_VALUE)
+def test_mask_account_card_value_errors(invalid_value):
+    with pytest.raises(ValueError):
+        mask_account_card(invalid_value)
+
+
+
+

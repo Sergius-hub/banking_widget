@@ -1,7 +1,7 @@
 from .masks import get_mask_account, get_mask_card_number
 
 
-def mask_account_card(account_or_card: str) -> str:
+def mask_account_card(value_str: str) -> str:
     """
     Функция mask_account_card(account_or_card), принимает строку с номером карты или номером счёта,
     возвращает такую же строку только с замаскированной строкой номера карты или счёта.
@@ -9,48 +9,45 @@ def mask_account_card(account_or_card: str) -> str:
     :return masked string: Visa Platinum 7000 79** **** 6361
     """
     result = ""
-    if not isinstance(account_or_card, str):
+    # Проверка типа
+    if not isinstance(value_str, str):
         raise TypeError("Ошибка: аргумент не строка")
+    # Проверка размерности
+    value_size = len(value_str)
+    if value_size < 16:
+        raise ValueError("Ошибка: недостаточно символов")
 
+    # Выбор между счетом и картой
+    if value_size == 16 or value_size == 20:
+        number_str = value_str
+    elif 16 < value_size < 20:
+        # Проверка пробела
+        if value_str[-17] != " ":
+            raise ValueError("Ошибка: отсутствует пробел отделяющий номер карты")
+        number_str = value_str[-16:]
+    elif value_size > 20:
+        # Если в -17 позиции пробел, то номером считаем [-16:]
+        if value_str[-17] == " ":
+            number_str = value_str[-16:]
+        else:
+            # Проверка пробела
+            if value_str[-21] != " ":
+                raise ValueError("Ошибка: отсутствует пробел отделяющий номер счёта")
+            number_str = value_str[-20:]
 
-    #
-    # size_str = len(account_or_card)
-    # # Проверяем длину строки
-    # if size_str < 16:
-    #     raise ValueError("Ошибка: недостаточно символов")
-    #
-    # # Определяем позицию среза с конца строки
-    # offset_reverse = -16
-    #
-    # # Полагаем что это номер карты
-    # card_number = account_or_card[offset_reverse:]
-    #
-    # # Проверяем номер карты число?
-    # if not card_number.isdigit():
-    #     raise ValueError("Ошибка: неправильный номер карты или счёта")
-    #
-    # # Проверяем строку на 20 и более символов
-    # if size_str >= 20:
-    #     # Если строка более 20 можем взять срез, и полагаем что это префикс для номера счета
-    #     account_number_prefix = account_or_card[offset_reverse - 4 : offset_reverse]
-    #     # Если префикс число, это номер счета
-    #     if account_number_prefix.isdigit():
-    #         # Если цифр достаточно для номера счета уменьшаем офсет
-    #         offset_reverse -= 4
-    #
-    # # Проверяем пробел
-    # if account_or_card[offset_reverse - 1] != " ":
-    #     if offset_reverse == -16:
-    #         raise ValueError("Ошибка: нет пробела для разделения номера карты")
-    #     elif offset_reverse == -20:
-    #         raise ValueError("Ошибка: нет пробела для разделения номера счета")
-    #
-    # # Строим результирующую строку
-    # if offset_reverse == -16:
-    #     result = account_or_card[:offset_reverse] + get_mask_card_number(int(card_number))
-    # elif offset_reverse == -20:
-    #     result = account_or_card[:offset_reverse] + get_mask_account(int(account_number_prefix + card_number))
-    #
+    # Проверка на число
+    if not number_str.isdigit():
+        raise ValueError("Ошибка: номер карты или счета не является числом")
+
+    # Определяем размер строки номера
+    number_str_size = len(number_str)
+
+    # Пройдены все проверки формируем результирующую строку
+    if number_str_size == 16:
+        result = value_str[:-16] + get_mask_card_number(int(number_str))
+    elif number_str_size == 20:
+        result = value_str[:-20] + get_mask_account(int(number_str))
+
     return result
 
 
