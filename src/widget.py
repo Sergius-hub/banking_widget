@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.masks import get_mask_account, get_mask_card_number
 
 
@@ -75,15 +77,11 @@ def get_date(date_str: str) -> str:
     if not day_str.isdigit() or not month_str.isdigit() or not year_str.isdigit():
         raise ValueError("Ошибка: некорректная дата")
 
-    day = int(day_str)
-    month = int(month_str)
-    year = int(year_str)
-
-    if  not (1 <= day <= 31):
-        raise ValueError("Ошибка: день указан неверно")
-
-    if  not (1 <= month <= 12):
-        raise ValueError("Ошибка: месяц указан неверно")
+    # Проверяем дату на существование ()
+    try:
+        datetime( int(year_str), int(month_str), int(day_str) )
+    except ValueError as e:
+        raise ValueError( f"Ошибка: несуществующая дата - {str( e )}" )
 
     # Формируем дату в нужном формате
     result = f"{day_str}.{month_str}.{year_str}"

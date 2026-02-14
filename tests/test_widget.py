@@ -68,6 +68,7 @@ def test_get_date_type_errors(invalid_type):
     "20240311",    # Короткая строка без разделителей
     "2024-03-41",  # Неправильная дата
     "202d-04-11",  # Неправильная дата
+    "2026-02-30"   # Несуществующая дата
 ])
 def test_get_date_value_errors(invalid_value):
     with pytest.raises(ValueError):
