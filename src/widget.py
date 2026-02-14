@@ -1,12 +1,12 @@
-from .masks import get_mask_account, get_mask_card_number
+from src.masks import get_mask_account, get_mask_card_number
 
 
 def mask_account_card(value_str: str) -> str:
     """
-    Функция mask_account_card(account_or_card), принимает строку с номером карты или номером счёта,
+    Функция mask_account_card(value_str: str) -> str, принимает строку с номером карты или номером счёта,
     возвращает такую же строку только с замаскированной строкой номера карты или счёта.
-    :param account_or_card: Visa Platinum 7000792289606361
-    :return masked string: Visa Platinum 7000 79** **** 6361
+    :param value_str: "Visa Platinum 7000792289606361"
+    :return masked string: "Visa Platinum 7000 79** **** 6361"
     """
     result = ""
     # Проверка типа
@@ -51,34 +51,41 @@ def mask_account_card(value_str: str) -> str:
     return result
 
 
-def get_date(str_date: str) -> str:
+def get_date(date_str: str) -> str:
     """
     Функция get_date(str_date) принимает строку с датой в начале,
     возвращает только дату в формате ДД.ММ.ГГГГ
-    :param str_date: "2024-03-11T02:26:18.671407"
-    :return: string date: "11.03.2024"
+    :param date_str: "2024-03-11T02:26:18.671407"
+    :return dd.mm.gggg: "11.03.2024"
     """
-    try:
-        result = ""
-        # Проверяем длину строки
-        if len(str_date) < 10:
-            raise ValueError("Ошибка: недостаточно символов")
+    # Проверка типа
+    if not isinstance(date_str, str):
+        raise TypeError("Ошибка: в аргументе не строка")
 
-        # Получаем дату, месяц, год
-        day_from_date = str_date[8:10]
-        month_from_date = str_date[5:7]
-        year_from_date = str_date[:4]
+    # Проверяем длину строки
+    if len(date_str) < 10:
+        raise ValueError("Ошибка: недостаточно символов")
 
-        # Если хотя бы одно из значений не число, возвращаем ошибку
-        if not day_from_date.isdigit() or not month_from_date.isdigit() or not year_from_date.isdigit():
-            raise ValueError("Ошибка: некорректная дата")
+    # Получаем дату, месяц, год
+    day_str = date_str[8:10]
+    month_str = date_str[5:7]
+    year_str = date_str[:4]
 
-    except ValueError as e:
-        # Возврат ошибки
-        return str(e)
+    # Если хотя бы одно из значений не число, возвращаем ошибку
+    if not day_str.isdigit() or not month_str.isdigit() or not year_str.isdigit():
+        raise ValueError("Ошибка: некорректная дата")
 
-    else:
-        # Формируем дату в нужном формате
-        result = f"{day_from_date}.{month_from_date}.{year_from_date}"
+    day = int(day_str)
+    month = int(month_str)
+    year = int(year_str)
 
-        return result
+    if  not (1 <= day <= 31):
+        raise ValueError("Ошибка: день указан неверно")
+
+    if  not (1 <= month <= 12):
+        raise ValueError("Ошибка: месяц указан неверно")
+
+    # Формируем дату в нужном формате
+    result = f"{day_str}.{month_str}.{year_str}"
+
+    return result
